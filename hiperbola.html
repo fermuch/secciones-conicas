@@ -12,7 +12,7 @@
   </head>
   <body>
     
-    <script src="//cdnjs.cloudflare.com/ajax/libs/three.js/r69/three.js"></script>
+    <script src="lib/three.js"></script>
     <script src="lib/OrbitControls.js"></script>
     <script>
       var camera, scene, renderer;
@@ -20,6 +20,8 @@
       var controls;
       var degrees = 95, right = true;
       var hiperbola, hiperbola_geometry, hiperbola_material;
+      var ellipse_geometry2, ellipse_geometry, ellipse_material, ellipse_material2, 
+          ellipse, ellipse2, geometry2, material2, cilindro3, cilindro4;
 
       function setup() {
 
@@ -29,18 +31,18 @@
         renderer.setClearColor( 0xFFFFFF, 1 );
         document.body.appendChild( renderer.domElement );
 
-        camera = new THREE.PerspectiveCamera( 50, W/H, 1, 10000 );
+        camera = new THREE.PerspectiveCamera( 80, W/H, 1, 10000 );
         camera.position.z = 600;
-        camera.position.y = 600;
+        camera.position.y = 20;
 
         scene = new THREE.Scene();
 
         controls = new THREE.OrbitControls( camera, renderer.domElement );
         
         
-        // paste your code from the geometryGUI here
+        // 
         geometry = new THREE.CylinderGeometry(1, 100, 200, 50, 50, false);
-        material = new THREE.MeshNormalMaterial({shading: THREE.FlatShading, transparent: true, opacity: 0.8});
+        material = new THREE.MeshNormalMaterial({shading: THREE.FlatShading, transparent: true, opacity: 0.3});
         cilindro1 = new THREE.Mesh(geometry, material);
         cilindro1.position.y = 0;
         scene.add(cilindro1);
@@ -56,7 +58,7 @@
         hiperbola_material = new THREE.MeshBasicMaterial( { color: 0xffff00, side: THREE.DoubleSide, opacity: 0.4, transparent: true } );
         hiperbola1 = new THREE.Mesh( hiperbola_geometry, hiperbola_material );
         hiperbola1.rotation.x = 30*(Math.PI/180);
-        scene.add( hiperbola1 );
+        // scene.add( hiperbola1 );
 
         hiperbola2 = new THREE.Mesh( hiperbola_geometry, hiperbola_material );
         // scene.add( hiperbola2 );
@@ -80,6 +82,37 @@
         scene.add( spotLight2 );
 
 
+        /* elipses */
+
+        ellipse_geometry = new THREE.SphereGeometry( 100, 32, 32 );
+        ellipse_geometry.applyMatrix( new THREE.Matrix4().makeScale( 0.1, 1.2, 0.8 ) );
+        ellipse_material = new THREE.MeshBasicMaterial( {color: 0xff0000} );
+        ellipse = new THREE.Mesh( ellipse_geometry, ellipse_material );
+        ellipse.position.set( 0, -100, 0 )
+        scene.add(ellipse);
+
+
+        ellipse_geometry2 = new THREE.SphereGeometry( 100, 32, 32 );
+        ellipse_geometry2.applyMatrix( new THREE.Matrix4().makeScale( 0.1, 1.2, 0.8 ) );
+        ellipse_material2 = new THREE.MeshBasicMaterial( {color: 0xff0000} );
+        ellipse2 = new THREE.Mesh( ellipse_geometry2, ellipse_material2 );
+        ellipse2.position.set( 0, 300, 0 )
+        scene.add(ellipse2);
+
+        /* cosas para tapar de forma hermosa */
+        geometry2 = new THREE.BoxGeometry(500, 200, 300, 50, 50, false);
+        material2 = new THREE.MeshBasicMaterial({color: 0xFFFFFF, vertexColors: 0xFFFF00, shading: THREE.NoShading, fog: false});
+
+        cilindro3 = new THREE.Mesh(geometry2, material2);
+        cilindro3.position.y = 400;
+        scene.add(cilindro3);
+
+        cilindro4 = new THREE.Mesh(geometry2, material2);
+        cilindro4.position.y = -200;
+        cilindro4.rotation.x = 180*(Math.PI/180);
+        scene.add(cilindro4);
+
+
       }
 
       function draw() {
@@ -95,19 +128,28 @@
         hiperbola1.rotation.z = cilindro1.rotation.z
         // hiperbola1.rotation.x = cilindro1.rotation.x
         degrees = calculateDegrees(degrees)
-        hiperbola1.rotation.x = degrees*(Math.PI/180);
+        hiperbola1.rotation.x = degrees*(Math.PI/190);
 
         hiperbola2.position.y = cilindro2.position.y
         hiperbola2.rotation.z = cilindro2.rotation.z
         hiperbola2.rotation.x = cilindro2.rotation.x
-        
+
+
+        var geom, i, len, ref;
+        ref = [cilindro1, cilindro2, hiperbola1, hiperbola2, ellipse, ellipse2]
+        for (i = 0, len = ref.length; i < len; i++) {
+          geom = ref[i];
+          geom.rotation.y += 0.01;
+        }
         
         renderer.render( scene, camera );
+
+
 
       }
 
       function calculateDegrees(actual){
-        var from = 95,
+        /*var from = 95,
             to   = 115;
         if (right === true){
             current = actual + 0.1;
@@ -119,8 +161,8 @@
         }
         if (current < from){
             right = true;
-        }
-        return current;
+        }*/
+        return actual;
       }
 
       setup();
